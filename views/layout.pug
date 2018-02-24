@@ -4,6 +4,8 @@ html
     script(src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous")
     script(src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js" type="text/javascript")
     script(src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js" type="text/javascript")
+    script(src="https://brainblocks.io/brainblocks.min.js")
+
     script(type="text/javascript" src="/js/app.js")
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous")
 
@@ -36,30 +38,28 @@ html
 
           .card-body
             .alert.alert-success(v-if="success") Success!
-            transition(name="fade")
-              span(v-if="step == 1")
-                form(v-on:submit="loadBrainBlocks")
-                  .form-group
-                    label.form-label Your Name
-                    input.form-control(v-model="from" type="text")
-                  .form-group
-                    label.form-label Currency
-                    select.form-control(v-model="currency")
-                      option(value="usd") USD
-                      option(value="nano") Nano
+            span(v-if="step == 1")
+              form(v-on:submit="loadBrainBlocks")
+                .form-group
+                  label.form-label Your Name
+                  input.form-control(v-model="from" type="text")
+                .form-group
+                  label.form-label Currency
+                  select.form-control(v-model="currency")
+                    option(value="usd") USD
+                    option(value="nano") Nano
 
-                  .form-group
-                    label.form-label Amount
-                    input.form-control(v-model="amount")
+                .form-group
+                  label.form-label Amount
+                  input.form-control(v-model="amount")
 
-                  .form-group
-                    transition(name="fade")
-                      span(v-if="!submitting")
-                        button.btn.btn-primary.mr-2 Pay With Nano
-                        button.btn.btn-outline-secondary(v-on:click="preview" type="button") Preview
-                      span(v-if="submitting") Submitting
-                    div.mt-3(v-if="previewUrl")
-                      img(:src="previewUrl")
-              span(v-if="step == 2")
-                #brainblocks-container
+                .form-group
+                  transition(name="fade")
+                    span(v-if="!submitting")
+                      button.btn.btn-primary.mr-2 Pay With Nano
+                      button.btn.btn-outline-secondary(v-on:click="preview" type="button") Preview
+                    span(v-if="submitting") Submitting
+                  div.mt-3(v-if="previewUrl")
+                    img(:src="previewUrl")
+            #brainblocks-container
 

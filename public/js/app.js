@@ -71,14 +71,15 @@ document.addEventListener('DOMContentLoaded', function () {
               this.github = data.github
             })
           },
-          confirmDonation: function () {
+          confirmDonation: function (data) {
             this.submitting = true
             $.ajax({
               url: this.repoEndpoint + '/donate',
               data: JSON.stringify({
                 amount: this.amount,
                 currency: this.currency,
-                from: this.from
+                from: this.from,
+                token: data.token
               }),
               contentType: 'application/json',
               type: 'POST',
@@ -117,10 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
               return
             }
 
-            //TODO: Do brainblocks
-            this.confirmDonation()
-            return
-
             $('#brainblocks-container').html('<div id="brainblocks"></div>')
 
             var rendered = true
@@ -138,9 +135,8 @@ document.addEventListener('DOMContentLoaded', function () {
                   amount: this.amount
                 },
                 onPayment: function(data) {
-                  console.log('data',data);
-                  alert('Payment went through')
-                }
+                  this.confirmDonation(data)
+                }.bind(this)
               }, '#brainblocks');
             }
             catch (ex) {
@@ -158,8 +154,8 @@ document.addEventListener('DOMContentLoaded', function () {
             readme: {},
             step: 1,
             errors: [],
-            amount: 1000,
-            currency: 'nano',
+            amount: 0.1,
+            currency: 'usd',
             from: '',
             success: false,
             loading: true,
