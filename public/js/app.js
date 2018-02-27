@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         template: getTemplate('page-pick-repo'),
         data: function () {
           return {
-            org: '',
+            owner: '',
             repo: '',
             errors: []
           }
@@ -28,11 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
           submit: function (e) {
             e.preventDefault()
             this.errors = []
-            this.org = this.org.trim()
+            this.owner = this.owner.trim()
             this.repo = this.repo.trim()
 
-            if (!this.org) {
-              this.errors.push('Org is required')
+            if (!this.owner) {
+              this.errors.push('owner is required')
             }
 
             if (!this.repo) {
@@ -43,19 +43,20 @@ document.addEventListener('DOMContentLoaded', function () {
               return
             }
 
-            this.org = this.org.toLowerCase()
+            this.owner = this.owner.toLowerCase()
             this.repo = this.repo.toLowerCase()
 
-            router.push(this.org + '/' + this.repo)
+            router.push(this.owner + '/' + this.repo)
           }
         }
       }
     }, {
-      path: '/:org/:repo',
+      path: '/:owner/:repo',
       component: {
         template: getTemplate('page-donate'),
         created: function () {
             this.fetchData()
+            this.fetchCurrencies()
         },
         watch: {
           '$route': 'fetchData'
@@ -63,13 +64,23 @@ document.addEventListener('DOMContentLoaded', function () {
         methods: {
           fetchData: function () {
             this.loading = true
-            this.repoEndpoint = endpoint + 'repos/' + this.$route.params.org + '/' + this.$route.params.repo
+            this.repoEndpoint = endpoint + 'repos/' + this.$route.params.owner + '/' + this.$route.params.repo
             // replace `getPost` with your data fetching util / API wrapper
             $.getJSON(this.repoEndpoint + '.json', (data) => {
               this.loading = false
               this.readme = data.readme
               this.github = data.github
             })
+          },
+          fetchCurrencies: function () {
+            var url = endpoint + 'currencies'
+            // replace `getPost` with your data fetching util / API wrapper
+            $.getJSON(url, function (data) {
+              this.currencies = Object.keys(data).map((key) => {
+                return data[key]
+              })
+              console.log('this.currencies',this.currencies);
+            }.bind(this))
           },
           confirmDonation: function (data) {
             this.submitting = true
@@ -84,10 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
               contentType: 'application/json',
               type: 'POST',
               success: function (data, status, xhr) {
-                console.log('data',data);
-                console.log('status',status);
-                console.log('xhr.body',xhr.body);
-                console.log('xhr.status',xhr.status);
                 this.submitting = false
                 if(xhr.status == 200) {
                   this.success = true
@@ -105,7 +112,6 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           preview: function () {
             this.previewUrl = this.repoEndpoint + '/donations/preview?from=' + this.from + '&amount=' + this.amount + '&currency=' + this.currency
-            console.log('this.previewUrl',this.previewUrl);
           },
           loadBrainBlocks: function (e) {
             e.preventDefault()
@@ -122,12 +128,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var rendered = true
             var currency = this.currency
+            console.log('this.currency',this.currency);
             if (currency == 'nano') {
               currency = 'rai'
             }
             try {
-              console.log('this.amount',this.amount);
-              console.log('this.nanoAddress',this.nanoAddress);
               brainblocks.Button.render({
                 payment: {
                   destination: this.nanoAddress,

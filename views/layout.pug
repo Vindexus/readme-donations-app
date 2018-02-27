@@ -34,7 +34,8 @@ html
               .col-md-10
                 h3 Donate to {{github.full_name}}
                 blockquote {{github.description}}
-                .alert.alert-info(v-if="!readme") The owner of this repo must create a <code>readme-donations.json</code> file to collect your donation.
+
+            .alert.alert-info.mt-2(v-if="!readme") The owner of this repo must create a <code>readme-donations.json</code> file to collect your donation.
 
           .card-body
             .alert.alert-success(v-if="success") Success!
@@ -44,10 +45,9 @@ html
                   label.form-label Your Name
                   input.form-control(v-model="from" type="text")
                 .form-group
-                  label.form-label Currency
+                  label.form-label Currency {{currency}}
                   select.form-control(v-model="currency")
-                    option(value="usd") USD
-                    option(value="nano") Nano
+                    option(v-for="cur in currencies" v-bind:value="cur.key") {{cur.name}} {{cur.prefix}} {{cur.key}}
 
                 .form-group
                   label.form-label Amount
