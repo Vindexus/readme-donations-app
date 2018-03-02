@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
             this.repo = this.repo.trim()
 
             if (!this.owner) {
-              this.errors.push('owner is required')
+              this.errors.push('Owner is required')
             }
 
             if (!this.repo) {
@@ -70,7 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
               this.loading = false
               this.readme = data.readme
               this.github = data.github
+              console.log('this.github',this.github);
             })
+          },
+          cancel: function () {
+            this.step = 1
           },
           fetchCurrencies: function () {
             var url = endpoint + 'currencies'
@@ -111,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
           },
           preview: function () {
-            this.previewUrl = this.repoEndpoint + '/donations/preview?from=' + this.from + '&amount=' + this.amount + '&currency=' + this.currency
+            this.previewUrl = this.repoEndpoint + '/donations/preview?from=' + this.from + '&enteredAmount=5&enteredCurrency=nano'
           },
           loadBrainBlocks: function (e) {
             e.preventDefault()
@@ -124,20 +128,19 @@ document.addEventListener('DOMContentLoaded', function () {
               return
             }
 
+            this.preview()
+
             $('#brainblocks-container').html('<div id="brainblocks"></div>')
 
             var rendered = true
             var currency = this.currency
-            console.log('this.currency',this.currency);
-            if (currency == 'nano') {
-              currency = 'rai'
-            }
+            console.log('currency', currency);
             try {
               brainblocks.Button.render({
                 payment: {
                   destination: this.nanoAddress,
                   currency: currency,
-                  amount: this.amount
+                  amount: this.amount.toString()
                 },
                 onPayment: function(data) {
                   this.confirmDonation(data)

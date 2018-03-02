@@ -17,7 +17,7 @@ html
         errors(:errors="errors")
         .form-group.form-inline
           label.form-label github.com/
-          input.form-control(v-model="org" type="text" name="org" size="10")
+          input.form-control(v-model="owner" type="text" name="owner" size="10")
           label.form-label /
           input.form-control(v-model="repo" type="text" name="repo" size="15")
           button.ml-2.btn.btn-primary Next
@@ -29,13 +29,15 @@ html
         .card
           .card-header
             .row
-              .col-md-2
+              .col-2
                 img.pull-right.ml-2(v-bind:src="github.owner.avatar_url" width="100%")
-              .col-md-10
+              .col-10
                 h3 Donate to {{github.full_name}}
                 blockquote {{github.description}}
 
-            .alert.alert-info.mt-2(v-if="!readme") The owner of this repo must create a <code>readme-donations.json</code> file to collect your donation.
+            .alert.alert-info.mt-2(v-if="!readme")
+                p.mb-0 The owner of this repo must create a <code>readme-donations.json</code> file to collect your donation.
+                p.small.mb-0 Are you the owner? <router-link :to="{path: '/claim/' + github.full_name}">Claim your donations</router-link>
 
           .card-body
             .alert.alert-success(v-if="success") Success!
@@ -56,10 +58,16 @@ html
                 .form-group
                   transition(name="fade")
                     span(v-if="!submitting")
-                      button.btn.btn-primary.mr-2 Pay With Nano
+                      button.btn.btn-primary.mr-2 Donate With Nano
                       button.btn.btn-outline-secondary(v-on:click="preview" type="button") Preview
                     span(v-if="submitting") Submitting
                   div.mt-3(v-if="previewUrl")
                     img(:src="previewUrl")
-            #brainblocks-container
+            span(v-show="step == 2")
+              div.mb-2(v-if="previewUrl")
+                span Preview: 
+                img(:src="previewUrl")
+              #brainblocks-container
+              .mt-1
+                span or <a v-on:click="cancel" href="javascript:void(0)">cancel</a>
 
